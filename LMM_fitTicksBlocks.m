@@ -18,6 +18,7 @@ function dataOut = LMM_fitTicksBlocks(imgBW)
         bestTable = props(indBest,:);
     else 
        bestTable = props;
+       geoMean = geomean(majorLenRO);
     end
     
     %%% Test for two rows of blocks, test for offset squares

@@ -22,9 +22,9 @@ function LeafMachineMeasure_Setup()
     
     
     % Directory
-    setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
-    %setParameters.inDir = "D:\D_Desktop\TEST_BLOCKS";
-    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_SemSeg_Enlarge";
+    %setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
+    setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
+    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_SemSeg_Enlarge_DWC";
     
     
     % Save summary images containing bounding boxes
