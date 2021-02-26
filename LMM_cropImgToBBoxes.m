@@ -20,12 +20,13 @@ function [cropped, croppedText] = LMM_cropImgToBBoxes(img,imgT,name,detect,imgSa
     [S1,~] = size(bboxes);
     
     cropped = cell(S1,1);
-    croppedText = cell(S1,1);
+    if ~isempty(imgT), croppedText = cell(S1,1); end
+    
     for i = 1:S1
         imgCrop = imcrop(img,bboxes(i,:));
-        imgText = imcrop(imgT,bboxes(i,:));
+        if ~isempty(imgT), imgText = imcrop(imgT,bboxes(i,:)); end
         cropped{i} = imgCrop;
-        croppedText{i} = imgText;
+        if ~isempty(imgT), croppedText{i} = imgText; end
         if imgSave
             L = string(labels(i));
             S = string(round(scores(i),4));
@@ -34,4 +35,5 @@ function [cropped, croppedText] = LMM_cropImgToBBoxes(img,imgT,name,detect,imgSa
             imwrite(imgCrop,fullfile(dirOut,nameOut));
         end
     end
+    if isempty(imgT), croppedText = []; end
 end

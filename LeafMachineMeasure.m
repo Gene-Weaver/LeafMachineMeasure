@@ -17,8 +17,11 @@ function LeafMachineMeasure(setParameters)
     % Evaluate YOLO Networks 
     % Load YOLOv2 network
     LMM_printToConsole("net",[],[],[],[]);
-    net.YOLO = load(strcat(".",SYM,"YOLO",SYM,"net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200.mat"));
-    net.YOLO = net.YOLO.net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200;
+    %net.YOLO = load(strcat(".",SYM,"YOLO",SYM,"net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200.mat"));
+    %net.YOLO = net.YOLO.net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200;
+    
+    net.YOLO = load(strcat(".",SYM,"YOLO",SYM,"net_YOLO_gTruthV2_ShufLAug_MWK_VAL20_MobileNet5A_Fr61_500E200.mat"));
+    net.YOLO = net.YOLO.net_YOLO_gTruthV2_ShufLAug_MWK_VAL20_MobileNet5A_Fr61_500E200;
     
     
     
@@ -51,10 +54,15 @@ function LeafMachineMeasure(setParameters)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%  Run Semantic Segmentation for Text %%%%% % Note, in the full version of LeafMachine, this will have already taken place
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        timeSeg_START = tic;
-        imgText = LMM_basicSegmentation(net.SemSeg,imgProps.img,setParameters.useSemSeg_gpu);
-        timeSeg_END = toc(timeSeg_START);
-        LMM_printToConsole("seg",ind,fLen,[],timeSeg_END);
+        if setParameters.useSemSeg
+            timeSeg_START = tic;
+            imgText = LMM_basicSegmentation(net.SemSeg,imgProps.img,setParameters.useSemSeg_gpu);
+            timeSeg_END = toc(timeSeg_START);
+            LMM_printToConsole("seg",ind,fLen,[],timeSeg_END);
+        else
+            imgText = [];
+        end
+        
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%      Run YOLO object detection      %%%%%
