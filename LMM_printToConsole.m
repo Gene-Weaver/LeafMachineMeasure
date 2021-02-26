@@ -17,9 +17,18 @@ function LMM_printToConsole(choice,ind,fLen,filename,time)
     elseif choice == "overall"
         formatSpec = 'Processed %i images in %.2f seconds \n';
         fprintf(formatSpec,fLen,time);
+    
+    elseif choice == "seg"
+        formatSpec = '%s--- Segmentation: %.2f seconds \n';
+        justify = justifyPad(ind,fLen);
+        fprintf(formatSpec,justify,time);
         
     elseif choice == "net"
         formatSpec = 'Loading YOLOv2 detection network \n';
+        fprintf(formatSpec);
+        
+    elseif choice == "netSeg"
+        formatSpec = 'Loading LeafMachine pixel-wise semantic segmentation network \n';
         fprintf(formatSpec);
     end
 end

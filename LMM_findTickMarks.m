@@ -1,5 +1,4 @@
-function dataTicks = LMM_findTickMarks(imgData,detectData,imgProps,setParameters,dirList)
-
+function dataTicks = LMM_findTickMarks(imgData,imgRulersText,detectData,imgProps,setParameters,dirList)
 
     % TYPE = "mid" ;% gray or mid or blocks; background color, mid = b&w, gray = gray
     % COLOR = "black" ;% "white", "black", "NA"; tick color
@@ -7,14 +6,25 @@ function dataTicks = LMM_findTickMarks(imgData,detectData,imgProps,setParameters
     nObjects = length(imgData);
     dataTicks = {};
     for i = 1:nObjects
+        
         indObject = string(i);
         % First pass, pick optimal TYPE and COLOR
-        img = imgData{i};
         label = string(detectData.labels(i));
+        
+        %%% If using semantic segmentation, then swap the img for the BW text image, but blocks still use the regular computer vision approach
+        if setParameters.useSemSeg
+            if ((label == "blocks") || (label == "blocksAndTicks"))
+                img = imgData{i};
+            else
+                img = imgRulersText{i};
+            end
+        else
+            img = imgData{i};
+        end
         
         [type, color] = pickRulerFormat(label);
         
-        imgSet = LMM_correctRulerAnglePreprocess(img,type,color); %[img,imgGS,imgBW,imgBW_1pass,imgBW_2pass]
+        imgSet = LMM_correctRulerAnglePreprocess(img,type,color,setParameters); %[img,imgGS,imgBW,imgBW_1pass,imgBW_2pass]
         
         dataOut = LMM_calculateDistance(imgSet,imgProps,setParameters,dirList,label,indObject);
         dataTicks{i} = dataOut;

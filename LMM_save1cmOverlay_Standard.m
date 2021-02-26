@@ -2,6 +2,7 @@ function KEEP = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,
     imgPrint = imgSet.img;
     color = ['g';'b';'y'];
     DOUBLE = 0;
+    yJitter = 5;
     for nPlot = 1:height(usedTable)
         imgPOINTS2 = imgPOINTS(imgPOINTS.Scan == usedTable.scan(nPlot),:);
         conversionFactor = usedTable.dist_geo(nPlot);
@@ -10,6 +11,14 @@ function KEEP = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,
         % Save QC Image
         xPTS = [];
         yPTS = [];
+        XY = [];
+        linePtsX = [];
+        linePtsY = [];
+        lineStart = [];
+        SC = [];
+        KEEP = [];
+        
+        
         xPTS = imgPOINTS2{imgPOINTS2.Yimg == usedTable.yPosition(nPlot),3};
         xPTS = xPTS{1};
         yPTS = imgPOINTS2{imgPOINTS2.Yimg == usedTable.yPosition(nPlot),4};
@@ -19,17 +28,21 @@ function KEEP = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,
         Y = yPTS';
         XY = [X,Y];
 
+        % This finds approximate points to plot, if returns zero, just skip and plot the line
         KEEP = filterForConvDistance(XY,conversionFactor);
+        if isempty(KEEP)
+            KEEP = XY;
+        end
 
         % Determine and format points to plot
         [H,W,~] = size(imgPrint);
-        
+
         blank = zeros(H,W);
         blank(repmat(yPos,1,length(KEEP(:,2))),round(KEEP(:,1))) = 1;
         blank = imbinarize(blank);
         SC = imdilate(blank,strel('diamond',1));
         [SCy,SCx] = find(SC);
-        
+
         if nPlot == 1
             stretchFactor = 10; % Assumes mm.
             if contains(usedTable.ConversionMessage(nPlot),"1_2mm_to_1mm")
@@ -61,8 +74,7 @@ function KEEP = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,
             elseif contains(usedTable.ConversionMessage(nPlot),"1_2")
                 stretchFactor = 2;
             end
-        end
-         
+        end          
         
         % 1cm Line
         lineStart = SCx(round(length(SCx) / 2));
@@ -73,12 +85,17 @@ function KEEP = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,
 
 
         % Plot points and 1 cm. line overlay
-        imgPrint = overlay1cmLinePts(color(nPlot),imgPrint,SCx,SCy,linePtsX,linePtsY);
-        linePtsY = [];
+        try
+            imgPrint = overlay1cmLinePts(color(nPlot),imgPrint, SCx, SCy, linePtsX, linePtsY+yJitter);
+        catch
+            imgPrint = overlay1cmLinePts(color(nPlot),imgPrint, SCx, SCy, linePtsX, linePtsY); % incase the jitter is our of bounds
+        end
+        
         
         figure(7);
         imshow(imgPrint)
         %imshow(imgPrint2)
+        
         
     
     end

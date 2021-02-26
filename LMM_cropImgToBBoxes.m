@@ -1,7 +1,7 @@
 % Crop the image to each bounding box
 
 
-function cropped = LMM_cropImgToBBoxes(img,name,detect,imgSave,dirCrop,category)
+function [cropped, croppedText] = LMM_cropImgToBBoxes(img,imgT,name,detect,imgSave,dirCrop,category)
     bboxes = detect.bboxes;
     labels = detect.labels;
     scores = detect.scores;
@@ -20,9 +20,12 @@ function cropped = LMM_cropImgToBBoxes(img,name,detect,imgSave,dirCrop,category)
     [S1,~] = size(bboxes);
     
     cropped = cell(S1,1);
+    croppedText = cell(S1,1);
     for i = 1:S1
         imgCrop = imcrop(img,bboxes(i,:));
+        imgText = imcrop(imgT,bboxes(i,:));
         cropped{i} = imgCrop;
+        croppedText{i} = imgText;
         if imgSave
             L = string(labels(i));
             S = string(round(scores(i),4));
@@ -30,6 +33,5 @@ function cropped = LMM_cropImgToBBoxes(img,name,detect,imgSave,dirCrop,category)
             nameOut = strcat(name,"__",L,"_",string(i),"_sc",S,".jpg");
             imwrite(imgCrop,fullfile(dirOut,nameOut));
         end
-            
     end
 end

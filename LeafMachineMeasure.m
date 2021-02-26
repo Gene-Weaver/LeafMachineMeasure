@@ -4,15 +4,23 @@
 function LeafMachineMeasure(setParameters)
     if isunix, SYM = "/"; else, SYM = "\"; end
     addpath(strcat(".",SYM,"YOLO"));
+    addpath(strcat(".",SYM,"SemSeg"));
     
     % Handle directories
     dirList = LMM_buildDirOut(setParameters);
     
+    % Load SemSeg Network
+    LMM_printToConsole("netSeg",[],[],[],[]);
+    net.SemSeg = load(strcat(".",SYM,"SemSeg",SYM,"network_deeplab_v2_Lexi_dynamicCrop_AWK_SEQ20.mat")); 
+    net.SemSeg = net.SemSeg.deeplab_v2_Lexi_dynamicCrop_AWK_SEQ20;
+    
     % Evaluate YOLO Networks 
     % Load YOLOv2 network
     LMM_printToConsole("net",[],[],[],[]);
-    net = load(strcat(".",SYM,"YOLO",SYM,"net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200.mat"));
-    net = net.net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200;
+    net.YOLO = load(strcat(".",SYM,"YOLO",SYM,"net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200.mat"));
+    net.YOLO = net.YOLO.net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet5A_Fr61_500E200;
+    
+    
     
 %     net1 = load('D:\Dropbox\ML_Project\LM_YOLO_Training\Good_Models\net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet23A_Fr61_500E200.mat');
 %     net1 = net1.net_YOLO_gTruthV2_ShufL_MWK_VAL20_MobileNet23A_Fr61_500E200;
@@ -39,13 +47,21 @@ function LeafMachineMeasure(setParameters)
         % Build filename
         imgProps = LMM_getImageFile(file,setParameters);
         LMM_printToConsole("file",ind,fLen,imgProps.filename,[]);
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%  Run Semantic Segmentation for Text %%%%% % Note, in the full version of LeafMachine, this will have already taken place
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        timeSeg_START = tic;
+        imgText = LMM_basicSegmentation(net.SemSeg,imgProps.img,setParameters.useSemSeg_gpu);
+        timeSeg_END = toc(timeSeg_START);
+        LMM_printToConsole("seg",ind,fLen,[],timeSeg_END);
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%      Run YOLO object detection      %%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         timeDetect_START = tic;
-        
-        detectionData = LMM_detectObjects(net,imgProps,setParameters,dirList);
+
+        detectionData = LMM_detectObjects(net.YOLO,imgProps,imgText,setParameters,dirList);
         
         timeDetect_END = toc(timeDetect_START);
         LMM_printToConsole("detect",ind,fLen,[],timeDetect_END);

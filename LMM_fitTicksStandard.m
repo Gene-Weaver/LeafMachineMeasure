@@ -87,9 +87,15 @@ function dataOut = LMM_fitTicksStandard(imgBW,imgProps,dirList,setParameters,img
             imgPOINTS = [imgPOINTS;ADDpts];
         end
     end
+    % Sort only rows with more than 2 peaks, for clustering analysis in LMM_sortDistScanlines()
+    distScanlinesSort = distScanlines(distScanlines.n_peaks >= 2,:);
     
     %%% Sort through th scanlines. Oh my goodness this function was a pain to code
-    bestScanlines = LMM_sortDistScanlines(distScanlines);
+    if height(distScanlinesSort) >= 3
+        bestScanlines = LMM_sortDistScanlines(distScanlinesSort);
+    else
+        bestScanlines = distScanlines;
+    end
     bestScanlinesTable = LMM_buildScanlinesTable(bestScanlines);
     usedTable = bestScanlinesTable(bestScanlinesTable.Selected == "Used",:);
     
@@ -100,7 +106,11 @@ function dataOut = LMM_fitTicksStandard(imgBW,imgProps,dirList,setParameters,img
     
     %%% Write image overlay
     if setParameters.printScanlineMetadata
-        plotPts = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,setParameters,dirList,indObject);
+        if height(usedTable) > 0
+            plotPts = LMM_save1cmOverlay_Standard(usedTable,imgPOINTS,imgSet,imgProps,setParameters,dirList,indObject);
+        else
+            plotPts = [];
+        end
     end
     
     

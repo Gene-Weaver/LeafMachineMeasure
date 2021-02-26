@@ -6,18 +6,22 @@ function dataOut = LMM_fitTicksBlocks(imgBW)
     
     majorLen = props.MajorAxisLength;
     majorLenRO = rmoutliers(majorLen,'gesd');
-    majorLenROpeaks = findpeaks(majorLenRO);
-    majorLenROpeaksRO = rmoutliers(majorLenROpeaks,'gesd');
-    geoMean = geomean(majorLenROpeaksRO);
-    
-    upperB = 1.05*geoMean;
-    lowerB = 0.95*geoMean;
-    indBest = ((majorLen >= lowerB) & (majorLen <= upperB));
-    
-    bestTable = props(indBest,:);
+    if length(majorLenRO) >= 3 % Need 3 data points for findpeaks()
+        majorLenROpeaks = findpeaks(majorLenRO);
+        majorLenROpeaksRO = rmoutliers(majorLenROpeaks,'gesd');
+        geoMean = geomean(majorLenROpeaksRO);
+
+        upperB = 1.05*geoMean;
+        lowerB = 0.95*geoMean;
+        indBest = ((majorLen >= lowerB) & (majorLen <= upperB));
+
+        bestTable = props(indBest,:);
+    else 
+       bestTable = props;
+    end
     
     %%% Test for two rows of blocks, test for offset squares
-    if height(bestTable) == 1
+    if height(bestTable) < 3
         plotPts = [];
         convFactorCM = [];
         convFactorMM = [];
@@ -27,7 +31,7 @@ function dataOut = LMM_fitTicksBlocks(imgBW)
         yPosition = [];
         validation = [];
     else
-        data = testForTwoRows(bestTable);
+        data = testForTwoRows(bestTable,geoMean);
         % Save out
         convFactorCM = data.convFactor;
         convFactorMM = convFactorCM / 10;
@@ -57,7 +61,7 @@ function dataOut = LMM_fitTicksBlocks(imgBW)
 end
 
 
-function data = testForTwoRows(bestTable)
+function data = testForTwoRows(bestTable,geoMean)
     
     idx = kmeans(bestTable.Centroid(:,2),2);
     
@@ -86,6 +90,10 @@ function data = testForTwoRows(bestTable)
     upperEven = 1 * 1.05;
     lowerEven = 1 * 0.95;
     
+    % This is the offset square block ruler that will have even n blocks in each row
+    upperG = geoMean * 1.20;
+    lowerG = geoMean * 0.80;
+    
     % Option 1 - Typical high contrast ruler wtih 9 1cm blocks and 1 cm of mm tickcs
     if ((RATIO <= upper) && (RATIO >= lower))
         convFactor = small;
@@ -97,12 +105,22 @@ function data = testForTwoRows(bestTable)
         
     % Option 2 - Staggered blocks
     elseif ((RATIO <= upperEven) && (RATIO >= lowerEven))
-        convFactor = small/2; % Divide by 2 because the 1cm. blocks are be staggered
-        v = VAR(DIST == small);
-        yPos = Y(DIST == small);
-        nTerms = sum(TERMS);% TERMS(DIST == small); %Since cross val, sum the nTerms
-        validation = "CrossVal_Two_Rows_of_Blocks_Even";
-        plotPts = round(bestTable.Centroid);
+        % see if the dist ~roughly matches box width, if yes, no change, else divide by 2
+        if ((small <= upperG) && (small >= lowerG))
+            convFactor = small; % DONT Divide by 2 because the 1cm. blocks are staggered, but within range of width of squares
+            v = VAR(DIST == small);
+            yPos = Y(DIST == small);
+            nTerms = sum(TERMS);% TERMS(DIST == small); %Since cross val, sum the nTerms
+            validation = "CrossVal_Two_Rows_of_Blocks_Even";
+            plotPts = round(bestTable.Centroid);
+        else
+            convFactor = small/2; % Divide by 2 because the 1cm. blocks are staggered
+            v = VAR(DIST == small);
+            yPos = Y(DIST == small);
+            nTerms = sum(TERMS);% TERMS(DIST == small); %Since cross val, sum the nTerms
+            validation = "CrossVal_Two_Rows_of_Blocks_Even";
+            plotPts = round(bestTable.Centroid);
+        end
        
     % Option 3 - only 1 row is found, defaults to dist associated with largest number of boxes found
     else
@@ -111,13 +129,15 @@ function data = testForTwoRows(bestTable)
             convFactor = DIST(TERMS == nTerms);
             v = VAR(TERMS == nTerms);
             yPos = Y(TERMS == nTerms);
-            plotPts = round(bestTable.Centroid(idx == I(TERMS == nTerms),:));
+            %plotPts = round(bestTable.Centroid(idx == I(TERMS == nTerms),:));
+            plotPts = round(bestTable.Centroid);
         else
             nTerms = nTerms2;
             convFactor = DIST(TERMS == nTerms);
             v = VAR(TERMS == nTerms);
             yPos = Y(TERMS == nTerms);
-            plotPts = round(bestTable.Centroid(idx == I(TERMS == nTerms),:));
+            %plotPts = round(bestTable.Centroid(idx == I(TERMS == nTerms),:));
+            plotPts = round(bestTable.Centroid);
         end
         validation = "SingleVal_One_Row_Blocks";
     end
