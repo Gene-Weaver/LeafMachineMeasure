@@ -1,4 +1,4 @@
-function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
+function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,dirCrop)
     % Unpack
     img = imgProps.img;
     filename = imgProps.filename;
@@ -62,7 +62,7 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasBarcode
             category = "barcode";
             [summaryImg,detect_Barcode] = LMM_cleanUpBBoxes(labelsFound,labels_barcode,bboxes,scores,labels,summaryImg,enlarge,category,LW,false); 
-            cropped_Barcode = LMM_cropImgToBBoxes(img,filename,detect_Barcode,printCropped,dirCrop,category);
+            [cropped_Barcode, cropped_Barcode_Text] = LMM_cropImgToBBoxes(img,imgText,filename,detect_Barcode,printCropped,dirCrop,category);
             category = [];
         end    
 
@@ -70,7 +70,7 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasColor
             category = "color";
             [summaryImg,detect_Color] = LMM_cleanUpBBoxes(labelsFound,labels_color,bboxes,scores,labels,summaryImg,enlarge,category,LW,false); 
-            cropped_Color = LMM_cropImgToBBoxes(img,filename,detect_Color,printCropped,dirCrop,category);
+            [cropped_Color, cropped_Color_Text] = LMM_cropImgToBBoxes(img,imgText,filename,detect_Color,printCropped,dirCrop,category);
             category = [];
         end
 
@@ -78,7 +78,7 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasText
             category = "text";
             [summaryImg,detect_Text] = LMM_cleanUpBBoxes(labelsFound,labels_text,bboxes,scores,labels,summaryImg,enlarge,category,LW,false); 
-            cropped_Text = LMM_cropImgToBBoxes(img,filename,detect_Text,printCropped,dirCrop,category);
+            [cropped_Text, cropped_Text_Text] = LMM_cropImgToBBoxes(img,imgText,filename,detect_Text,printCropped,dirCrop,category);
             category = [];
         end 
 
@@ -86,7 +86,7 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasRuler
             category = "ruler";
             [summaryImg,detect_Ruler] = LMM_cleanUpBBoxes(labelsFound,labels_ruler,bboxes,scores,labels,summaryImg,enlarge,category,LW,false); 
-            cropped_Ruler = LMM_cropImgToBBoxes(img,filename,detect_Ruler,printCropped,dirCrop,category);
+            [cropped_Ruler, cropped_Ruler_Text] = LMM_cropImgToBBoxes(img,imgText,filename,detect_Ruler,printCropped,dirCrop,category);
             category = [];
         end
 
@@ -94,7 +94,7 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasImp
             category = "unitImp";
             [summaryImg,detect_UnitsImp] = LMM_cleanUpBBoxes(labelsFound,labels_unitsImp,bboxes,scores,labels,summaryImg,enlarge,category,LW,false);
-            cropped_UnitsImp = LMM_cropImgToBBoxes(img,filename,detect_UnitsImp,printCropped,dirCrop,category);
+            [cropped_UnitsImp, cropped_UnitsImp_Text] = LMM_cropImgToBBoxes(img,imgText,filename,detect_UnitsImp,printCropped,dirCrop,category);
             category = [];
         end
 
@@ -102,7 +102,7 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasMetric
             category = "unitMetric";
             [summaryImg,detect_UnitsMetric] = LMM_cleanUpBBoxes(labelsFound,labels_unitsMetric,bboxes,scores,labels,summaryImg,enlarge,category,LW,false); 
-            cropped_UnitsMetric = LMM_cropImgToBBoxes(img,filename,detect_UnitsMetric,printCropped,dirCrop,category);
+            [cropped_UnitsMetric, cropped_UnitsMetric_Text] = LMM_cropImgToBBoxes(img,imgText,filename,detect_UnitsMetric,printCropped,dirCrop,category);
             category = [];
         end
         
@@ -119,49 +119,61 @@ function detectionData = LMM_detectObjects(net,imgProps,setParameters,dirCrop)
         if hasBarcode
         detectionData.detect_Barcode = detect_Barcode;
         detectionData.cropped_Barcode = cropped_Barcode;
+        detectionData.cropped_Barcode_Text = cropped_Barcode_Text;
         else
         detectionData.detect_Barcode = [];
         detectionData.cropped_Barcode = [];
+        detectionData.cropped_Barcode_Text = [];
         end
         
         if hasColor
         detectionData.detect_Color = detect_Color;
         detectionData.cropped_Color = cropped_Color;
+        detectionData.cropped_Color_Text = cropped_Color_Text;
         else
         detectionData.detect_Color = [];
         detectionData.cropped_Color = [];
+        detectionData.cropped_Color_Text = [];
         end
         
         if hasText
         detectionData.detect_Text = detect_Text;
         detectionData.cropped_Text = cropped_Text;
+        detectionData.cropped_Text_Text = cropped_Text_Text;
         else
         detectionData.detect_Text = [];
         detectionData.cropped_Text = [];
+        detectionData.cropped_Text_Text = [];
         end
         
         if hasRuler
         detectionData.detect_Ruler = detect_Ruler;
         detectionData.cropped_Ruler = cropped_Ruler;
+        detectionData.cropped_Ruler_Text = cropped_Ruler_Text;
         else
         detectionData.detect_Ruler = [];
         detectionData.cropped_Ruler = [];
+        detectionData.cropped_Ruler_Text = [];
         end
         
         if hasImp
         detectionData.detect_UnitsImp = detect_UnitsImp;
         detectionData.cropped_UnitsImp = cropped_UnitsImp;
+        detectionData.cropped_UnitsImp_Text = cropped_UnitsImp_Text;
         else
         detectionData.detect_UnitsImp = [];
         detectionData.cropped_UnitsImp = [];
+        detectionData.cropped_UnitsImp_Text = [];
         end
         
         if hasMetric
         detectionData.detect_UnitsMetric = detect_UnitsMetric;
         detectionData.cropped_UnitsMetric = cropped_UnitsMetric;
+        detectionData.cropped_UnitsMetric_Text = cropped_UnitsMetric_Text;
         else
         detectionData.detect_UnitsMetric = [];
         detectionData.cropped_UnitsMetric = [];
+        detectionData.cropped_UnitsMetric_Text = [];
         end
     end  
 end

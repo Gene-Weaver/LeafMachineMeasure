@@ -19,16 +19,18 @@ function measurementData  = LMM_calcMetricDistance(detectionData,imgProps,setPar
     % Detected images are stored in: detectionData.cropped_ ...
     % Detected properties are stored in: detectionData.detect_ ...
     imgRulers = detectionData.cropped_Ruler;
+    imgRulersText = detectionData.cropped_Ruler_Text;
     dataRulers = detectionData.detect_Ruler;
     
     imgTexts = detectionData.cropped_Text;
+    imgTextsText = detectionData.cropped_Text_Text;
     dataTexts = detectionData.detect_Text;
     
     % setParameters.measureText == false generally
     
     % Start with looking at the "Ruler"s
     if ~isempty(imgRulers)
-        dataRulers = LMM_findTickMarks(imgRulers,dataRulers,imgProps,setParameters,dirList);
+        dataRulers = LMM_findTickMarks(imgRulers,imgRulersText,dataRulers,imgProps,setParameters,dirList);
         
         
         
