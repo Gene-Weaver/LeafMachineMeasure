@@ -22,9 +22,9 @@ function LeafMachineMeasure_Setup()
     
     
     % Directory
-    %setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
-    setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
-    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_SemSeg_Enlarge_DWC";
+    setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
+    %setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
+    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_5AshufAug_NoEnlarge";
     
     
     % Save summary images containing bounding boxes
@@ -39,7 +39,7 @@ function LeafMachineMeasure_Setup()
     
     setParameters.printRulerOverlay = true;
     setParameters.printScanlineMetadata = true;
-    setParameters.useSemSeg = true;
+    setParameters.useSemSeg = false;
     setParameters.useSemSeg_gpu = "gpu"; % Use EXACTLY one of the following: "auto" || "gpu" || "cpu"
     
     setParameters.maxMegapixels = 24; % Integer value. Higher than 20 requires powerful GPU
@@ -48,7 +48,7 @@ function LeafMachineMeasure_Setup()
     % Enlarge bounding boxes around found objects
     % *NOTE* Enable this option if you notice that bounding boxes
     %        do not quite align with the image, this may improve performance
-    setParameters.enlarge = true; % Use EXACTLY one of the following, not in quotes: true || false
+    setParameters.enlarge = false; % Use EXACTLY one of the following, not in quotes: true || false
     
     
     % Set detection strength

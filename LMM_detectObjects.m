@@ -32,7 +32,7 @@ function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,di
     
     %%%%% DETECTION %%%%%
     detectSuccess = true;
-    [bboxes, scores, labels] = detect(net,img,'ExecutionEnvironment','gpu','Threshold',T); 
+    [bboxes, scores, labels] = detect(net,img,'ExecutionEnvironment',setParameters.useSemSeg_gpu,'Threshold',T); 
     nScores = length(scores);
     
     % Analyze BBoxes
