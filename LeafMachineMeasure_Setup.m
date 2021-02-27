@@ -21,46 +21,104 @@ function LeafMachineMeasure_Setup()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     
-    % Directory
-    setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
-    %setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
-    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_5AshufAug_NoEnlarge";
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%      Set Directories      %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % inDir should not contain subdirectories 
+    % outDir will be created if it does not already exist 
     
+    setParameters.inDir = "D:\Dropbox\treeVRE\Image_Sets_BurOak\Bur_Oak_Images";
+    %setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
+    %setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
+    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_BurOak_5AshufAug_NoEnlarge";
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%       Save Options        %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Use EXACTLY one of the following, not in quotes: true || false
     
     % Save summary images containing bounding boxes
-    setParameters.printSummary = true; % Use EXACTLY one of the following, not in quotes: true || false
+    setParameters.printSummary = true; % DEFAULT: true
+     
+    
+    % Save each individual bounding box as an rgb image 
+    % *NOTE* This will reault in numerous small images per input image, not recommended for large batches
+    setParameters.printCropped = true; % DEFAULT: false
     
     
-    % Save each individual bounding box as an image 
-    % *NOTE* This will reault in numerous small images per input image, 
-    %        not recommended for large batches
-    setParameters.printCropped = true; % Use EXACTLY one of the following, not in quotes: true || false
+    % Save all attempted and successful ruler prediction images
+    setParameters.printRulerOverlay = true; % DEFAULT: true
     
     
-    setParameters.printRulerOverlay = true;
-    setParameters.printScanlineMetadata = true;
-    setParameters.useSemSeg = false;
+    % Save a csv file for each input image, contains all intermediate tickmark selection metadata
+    setParameters.printScanlineMetadata = true; % DEFAULT: false
+    
+    
+    % Save a csv file for each input image, contains only the highest confidence measurements 
+    %setParameters.printIndividualData = true; % DEFAULT: false
+    
+    
+    % Save copy of output data at regular intervals 
+    % If number is set greater than number of input files, then it will save one temp data file halfway throguh
+    %setParameters.printDataFreq = 50; % DEFAULT: 50 
+    
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%    Segmentation Options   %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % There are two options for locating text in an image
+    %     1. Using LeafMachine's semantic segmentation algorithm
+    %            |----> setParameters.useSemSeg = true
+    %     OR
+    %     2. Using non-machine learning computer vision
+    %            |----> setParameters.useSemSeg = false
+    % Try both on your data and see which gives better results, they perform differently
+    setParameters.useSemSeg = false; % DEFAULT: false
+    
+    
+    % If your computer/cluster has a gpu, set to "gpu", otherwise set to "auto" in most cases
+    % Using a cpu for segmentation and detection is ~7x slower than using a gpu
+    %            |----> setParameters.useSemSeg_gpu = "gpu"
+    % This setting applies to *BOTH* the semantic segmenation option, and the ruler object detection algorithms
     setParameters.useSemSeg_gpu = "gpu"; % Use EXACTLY one of the following: "auto" || "gpu" || "cpu"
     
-    setParameters.maxMegapixels = 24; % Integer value. Higher than 20 requires powerful GPU
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%    Image Size / Resize    %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % A gpu with 8GB of VRAM (common consumer-grade) can stably handle images up to 20 megapixels
+    % A gpu with 24GB of VRAM (Nvidia Quadro GPUs) can typically handle images up to 60 megapixels
+    %            |----> setParameters.maxMegapixels = 24; 
+    %
+    % If you receive this error message:
+    %            |----> " Out of memory on device. To view more detail about available memory on the GPU, use 'gpuDevice()' "
+    % Try lowering image megapixel size, image will be resized to be no larger than the set vaule
+    setParameters.maxMegapixels = 24; % DEFAULT: 50, must be an integer, not in quotes
     
     
-    % Enlarge bounding boxes around found objects
-    % *NOTE* Enable this option if you notice that bounding boxes
-    %        do not quite align with the image, this may improve performance
-    setParameters.enlarge = false; % Use EXACTLY one of the following, not in quotes: true || false
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%   Enlarge Bounding Boxes  %%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Enlarge bounding boxes around found objects. If the bounding boxes are cutting of rulers, set to true 
+    % and the bouding boxes for rulers and barcodes will be enlarged
+    setParameters.enlarge = false; % DEFAULT: false
     
     
-    % Set detection strength
-    % *NOTE* Strict return the least number of boxes and may not work
-    %        well for all datasets. Avg
-    setParameters.detectStrength = "Avg"; % Use EXACTLY one of the following: "Strict" || "Broad" || "Avg"
+    % Set detection strength. This is the minimum ruler detection confidence. 
+    % *NOTE* Strict return the least number of boxes and may not work well for all datasets
+    % Most boxes returned --- "Broad"  >  "Avg"  >  "Strict" --- Least boxes returned
+    % Use EXACTLY one of the following: "Strict" || "Avg" || "Broad"
+    setParameters.detectStrength = "Avg"; % DEFAULT: "Avg"
     
     
-    setParameters.measureText = false;
+    % Sometimes rulers are predicted to be text. 
+    % Set to true to try to locate tick marks in text boxes.
+    setParameters.measureText = false; % DEFAULT: false
     
     
-    setParameters.startIndex = 48; % To resume partway through a run
+    % Set this value to an integer to restart processing partway through a batch. 
+    setParameters.startIndex = 1; % DEFAULT: 1
 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,17 +126,5 @@ function LeafMachineMeasure_Setup()
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Call LeafMachineMeasure()
     LeafMachineMeasure(setParameters)
+    warning('off', 'images:bwfilt:tie')
 end
-
-% Temp variables for me *** DELETE LATER ***
-
-    % Directory = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
-    % outDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Out-Avg";
-
-
-    %Directory = "/home/brlab/Dropbox/ML_Project/LM_YOLO_Training/YOLO_Test_Imgs";
-    %outDir = "/home/brlab/Dropbox/ML_Project/LM_YOLO_Training/YOLO_Test_Out-Strict-network_YOLO_MobileNet32A96A_gTruth_YOLO_Fr114_3890E0_01";
-
-    %Directory = "D:\Dropbox\treeVRE\Image_Sets_BurOak\Bur_Oak_Images";
-    %outDir = "D:\D_Desktop\YOLO_Test_BurOak-Avg-net_YOLO_gTruthV2_MWK_VAL20TS_MobileNet32A_Fr0_1000E450";
-
