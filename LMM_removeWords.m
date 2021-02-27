@@ -31,7 +31,7 @@ function imgBW = LMM_removeWords(imgBW,PF)
 
     % Black out the letters from the original binary image
     imgBW_COPY = imgBW;
-    for i = 1:length(roi2)
+    for i = 1:length(roi2(:,1))
         ROI = round(roi2(i,:));
         x1 = ceil(ROI(1));
         x2 = round(x1 + ROI(3));
