@@ -2,6 +2,12 @@ function dataOut = LMM_fitTicksBlocks(imgBW)
 
     BW = bwareafilt(imgBW,20,'largest');
     
+    areaAll = regionprops('table',BW, 'Area');
+    rangeMax = max(areaAll.Area);
+    rangeMin = min(areaAll.Area);
+    
+    BW = bwareafilt(imgBW,[rangeMin rangeMax]);
+    
     props = regionprops('table',BW, 'Centroid','Circularity','BoundingBox','MajorAxisLength');
     
     majorLen = props.MajorAxisLength;
