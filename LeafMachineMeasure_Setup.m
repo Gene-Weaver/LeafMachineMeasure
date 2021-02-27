@@ -59,7 +59,8 @@ function LeafMachineMeasure_Setup()
     
     setParameters.measureText = false;
     
-
+    
+    setParameters.startIndex = 48; % To resume partway through a run
 
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

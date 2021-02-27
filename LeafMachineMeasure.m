@@ -43,13 +43,15 @@ function LeafMachineMeasure(setParameters)
     fLen = length(imgFiles);
 
     % Loop through image dir
-    ind = 1;
+    startIndex = setParameters.startIndex;
+    
     timeOverall_START = tic;
-    for file = imgFiles'
+    for indFile = startIndex:length(imgFiles)
+        file = imgFiles(indFile);
         
         % Build filename
         imgProps = LMM_getImageFile(file,setParameters);
-        LMM_printToConsole("file",ind,fLen,imgProps.filename,[]);
+        LMM_printToConsole("file",indFile,fLen,imgProps.filename,[]);
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%  Run Semantic Segmentation for Text %%%%% % Note, in the full version of LeafMachine, this will have already taken place
@@ -58,7 +60,7 @@ function LeafMachineMeasure(setParameters)
             timeSeg_START = tic;
             imgText = LMM_basicSegmentation(net.SemSeg,imgProps.img,setParameters.useSemSeg_gpu);
             timeSeg_END = toc(timeSeg_START);
-            LMM_printToConsole("seg",ind,fLen,[],timeSeg_END);
+            LMM_printToConsole("seg",indFile,fLen,[],timeSeg_END);
         else
             imgText = [];
         end
@@ -72,7 +74,7 @@ function LeafMachineMeasure(setParameters)
         detectionData = LMM_detectObjects(net.YOLO,imgProps,imgText,setParameters,dirList);
         
         timeDetect_END = toc(timeDetect_START);
-        LMM_printToConsole("detect",ind,fLen,[],timeDetect_END);
+        LMM_printToConsole("detect",indFile,fLen,[],timeDetect_END);
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,13 +86,13 @@ function LeafMachineMeasure(setParameters)
         
         
         timeMeasure_END = toc(timeMeasure_START);
-        LMM_printToConsole("measure",ind,fLen,[],timeMeasure_END);
+        LMM_printToConsole("measure",indFile,fLen,[],timeMeasure_END);
         
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%        ?      Save Data      ?        %%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        ind = ind + 1;
+        indFile = indFile + 1;
     end
     %writetable(DwC10RandImg_MP,"D:\Dropbox\ML_Project\Image_Database\LeafMachine_OverviewStats\DwC_10RandImg_MegapixelByFilename.xlsx")
 
@@ -101,5 +103,5 @@ function LeafMachineMeasure(setParameters)
 
 
     timeOverall_END = toc(timeOverall_START);
-    LMM_printToConsole("overall",ind,fLen,[],timeOverall_END);
+    LMM_printToConsole("overall",indFile,fLen,[],timeOverall_END);
 end
