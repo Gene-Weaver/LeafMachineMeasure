@@ -32,6 +32,8 @@ function [swap,conversion] = LMM_checkMetricConversion(A,B,nB,n)
         conversion = "1mm_to_1_8";
     elseif Is_A_a_Metric_of_B(A,B,"1_16")
         conversion = "1mm_to_1_16";
+%     elseif Is_A_a_Metric_of_B(B,A,"1_32") %since 1/32 is smaller
+%         conversion = "1mm_to_1_32";
     else
         conversion = "NA";
     end
@@ -101,6 +103,14 @@ function Y_N = Is_A_a_Metric_of_B(A,B,choice)
         else
             Y_N = 0;
         end
+    
+%     elseif choice == "1_32" %1/32 inch
+%         C = A / 0.793750;
+%         if ((C <= B*upperBound) && (C >= B*lowerBound))
+%             Y_N = 1;
+%         else
+%             Y_N = 0;
+%         end
         
     elseif choice == "1_16" %1/16 inch
         C = A / 1.5875;

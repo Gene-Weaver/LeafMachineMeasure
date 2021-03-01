@@ -5,6 +5,7 @@ function LeafMachineMeasure(setParameters)
     if isunix, SYM = "/"; else, SYM = "\"; end
     addpath(strcat(".",SYM,"YOLO"));
     addpath(strcat(".",SYM,"SemSeg"));
+    setParameters.SYM = SYM;
     
     % Handle directories
     dirList = LMM_buildDirOut(setParameters);

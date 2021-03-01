@@ -119,7 +119,7 @@ function dataOut = LMM_fitTicksStandard(imgBW,imgProps,dirList,setParameters,img
     %%%%%%%%%%
     % FORMAT for data out
     % Save out
-    dataOut.props = usedTable; % Centroid(2cols), BBox(4cols), MajorAxisLength(1col), Circularity(1col)
+    dataOut.usedTable = usedTable; % Centroid(2cols), BBox(4cols), MajorAxisLength(1col), Circularity(1col)
     dataOut.convFactorCM = [];
     dataOut.convFactorMM = [];
     dataOut.variance = [];

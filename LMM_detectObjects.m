@@ -108,13 +108,16 @@ function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,di
         
         %%%%% PRINT SUMMARY IMAGE %%%%%
         if printSummary
-            name3 = strcat(outDir,SYM,"Summary",SYM,filename,"_Objects.jpg");
-            imwrite(summaryImg,name3) 
+            fnamePrintSummary = strcat(outDir,SYM,"Summary",SYM,filename,"_Objects.jpg");
+            imwrite(summaryImg,fnamePrintSummary) % Moved to the print function 
+        else
+            fnamePrintSummary = [];
         end  
         
         % Save output data
         detectionData.detectSuccess = detectSuccess;
         detectionData.summaryImg = summaryImg;
+        detectionData.fnamePrintSummary = fnamePrintSummary;
         
         if hasBarcode
         detectionData.detect_Barcode = detect_Barcode;

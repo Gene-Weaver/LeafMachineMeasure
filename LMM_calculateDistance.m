@@ -17,7 +17,7 @@ function dataOut = LMM_calculateDistance(imgSet,imgProps,setParameters,dirList,l
         dataOut = LMM_fitTicksBlocks(imgBW);
         if setParameters.printRulerOverlay
             if ~isempty(dataOut.plotPts)
-                LMM_save1cmOverlay_Blocks(imgSet,imgProps,dirList,dataOut,indObject);
+                dataOut = LMM_save1cmOverlay_Blocks(imgSet,imgProps,dirList,dataOut,indObject);
             end
         end
 
