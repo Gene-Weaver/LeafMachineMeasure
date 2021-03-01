@@ -30,7 +30,7 @@ function measurementData  = LMM_calcMetricDistance(detectionData,imgProps,setPar
     
     % Start with looking at the "Ruler"s
     if ~isempty(imgRulers)
-        dataRulers = LMM_findTickMarks(imgRulers,imgRulersText,dataRulers,imgProps,setParameters,dirList);
+        dataTicks_Ruler = LMM_findTickMarks(imgRulers,imgRulersText,dataRulers,imgProps,setParameters,dirList);
         
         
         
@@ -39,13 +39,24 @@ function measurementData  = LMM_calcMetricDistance(detectionData,imgProps,setPar
     % Go through text only if user wants it
     if setParameters.measureText
         if ~isempty(imgTexts)
-
+            %dataTicks_Text = LMM_findTickMarks(imgTexts,imgTextsText,dataTexts,imgProps,setParameters,dirList);
 
 
         end
+        
+    else 
+        dataTicks_Text = [];
     end
 
-    measurementData = dataRulers; % Temp
+    cleanedTable = LMM_cleanupImageData(imgProps, dirList, setParameters, dataTicks_Ruler,dataTicks_Text);
+    
+    
+    
+    
+    
+    
+    measurementData.rulers = dataTicks_Ruler;
+    measurementData.text = dataTicks_Text;
     
     
 

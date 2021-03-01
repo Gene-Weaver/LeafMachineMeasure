@@ -27,8 +27,8 @@ function LeafMachineMeasure_Setup()
     % inDir should not contain subdirectories 
     % outDir will be created if it does not already exist 
     
-    setParameters.inDir = "D:\Dropbox\treeVRE\Image_Sets_BurOak\Bur_Oak_Images";
-    %setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
+    %setParameters.inDir = "D:\Dropbox\treeVRE\Image_Sets_BurOak\Bur_Oak_Images";
+    setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
     %setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
     setParameters.outDir = "D:\D_Desktop\TEST_YOLO_BurOak_5AshufAug_NoEnlarge";
     

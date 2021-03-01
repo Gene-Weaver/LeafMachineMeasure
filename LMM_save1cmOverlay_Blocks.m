@@ -1,12 +1,13 @@
-function LMM_save1cmOverlay_Blocks(imgSet,imgProps,dirList,blocksData,indObject)
+function blocksData = LMM_save1cmOverlay_Blocks(imgSet,imgProps,dirList,blocksData,indObject)
     yJitter = 5;
     % Unpack
     plotPts = blocksData.plotPts;
     convFactor = blocksData.convFactorCM;
     
     % Determine and format points to plot
-    [H,W,~] = size(imgSet.img);
     imgPrint = imgSet.img;
+    
+    [H,W,~] = size(imgSet.img);
     BLANK = zeros(H,W);
     BLANK(repmat(round(blocksData.yPosition),1,length(plotPts(:,2))),plotPts(:,1)) = 1;
     BLANK = imbinarize(BLANK);
@@ -25,10 +26,13 @@ function LMM_save1cmOverlay_Blocks(imgSet,imgProps,dirList,blocksData,indObject)
     catch
         imgPrint = overlay1cmLine_Blocks(imgPrint,SCx,SCy,linePtsX,linePtsY); % incase the jitter is our of bounds
     end
+    
+    fnameRulerOverlay = fullfile(dirList.rulerOverlay,strcat(imgProps.filename,"_RulerOverlay_",indObject,".jpg"));
+    blocksData.fnameRulerOverlay = fnameRulerOverlay;
 
-    figure(7);
-    imshow(imgPrint)
-    imwrite(imgPrint,fullfile(dirList.rulerOverlay,strcat(imgProps.filename,"_RulerOverlay_",indObject,".jpg")))
+    %figure(7);
+    %imshow(imgPrint)
+    imwrite(imgPrint,fnameRulerOverlay)
 
 
 end
