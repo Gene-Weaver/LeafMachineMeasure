@@ -1,4 +1,4 @@
-function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,dirCrop)
+function detectionData = LMM_detectObjects(net,imgProps,imgText,imgSeg,setParameters,dirCrop)
     % Unpack
     img = imgProps.img;
     filename = imgProps.filename;
@@ -8,7 +8,6 @@ function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,di
     detectStrength = setParameters.detectStrength;
     enlarge = setParameters.enlarge;
     megapixels = imgProps.megapixels; 
-
 
     labels_all = cellstr(net.ClassNames);
     
@@ -22,12 +21,20 @@ function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,di
     
     % For UNIX compatibility
     if isunix, SYM = "/"; else, SYM = "\"; end    
-    if megapixels < 12, LW = 3; elseif (12 <= megapixels)&&(megapixels < 20), LW = 6; else, LW = 14; end 
+    if setParameters.rulerBoundingBoxPrintThickness == "Exact"
+        LW = 1;
+    elseif setParameters.rulerBoundingBoxPrintThickness == "Bold"
+        if megapixels < 12, LW = 3; elseif (12 <= megapixels)&&(megapixels < 20), LW = 6; else, LW = 15; end
+    elseif setParameters.rulerBoundingBoxPrintThickness == "Bolder"
+        if megapixels < 12, LW = 4; elseif (12 <= megapixels)&&(megapixels < 20), LW = 12; else, LW = 30; end 
+    else
+        error('Error: In the LeafMachineMeasure_Setup file, please set setParameters.rulerBoundingBoxPrintThickness to be exactly "Exact" or "Bold" or "Bolder" ')
+    end
 
     % Set detection threshold
     if detectStrength == "Broad", T = 0.05;%[0.5,0.25,0.15,0.10,0.05];
-    elseif detectStrength == "Strict", T = 0.25;%[0.8,0.5];
-    else, T = 0.10;%[0.5,0.25,0.15,0.10];% "Avg" 
+    elseif detectStrength == "Strict", T = 0.4;%[0.8,0.5];
+    else, T = 0.10;%[0.5,0.25,0.15,0.10];% "Avg" = 0.1
     end
     
     %%%%% DETECTION %%%%%
@@ -55,7 +62,11 @@ function detectionData = LMM_detectObjects(net,imgProps,imgText,setParameters,di
         detectionData.detectSuccess = detectSuccess;
     else
         detectSuccess = true;
-        summaryImg = img;
+        if setParameters.printRulerOverlayComplex
+            summaryImg = imgSeg;
+        else
+            summaryImg = img;
+        end
         %%%%% SORTING OUTPUT %%%%%
 
         %%%%% BARCODE %%%%%

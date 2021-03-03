@@ -3,10 +3,14 @@
 % BBOX prediction from the YOLO object detector
 
 
-function textFromImage = LMM_basicSegmentation(net,image,cpu_gpu)
+function [textFromImage,imageSeg] = LMM_basicSegmentation(net,image,cpu_gpu)
 
     % Segmentation
     [C,~,~] = semanticseg(image,net,'ExecutionEnvironment',cpu_gpu);
+    
+    map = [0 1 0; 0 0 1; 1 0 1; 1 1 1; 1 0 0];
+        
+    imageSeg = labeloverlay(image,C,'Colormap',map);
     
     binaryMasks = LMM_getBinaryMasks(C);
     

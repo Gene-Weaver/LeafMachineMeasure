@@ -30,8 +30,11 @@ function LeafMachineMeasure_Setup()
     %setParameters.inDir = "D:\Dropbox\treeVRE\Image_Sets_BurOak\Bur_Oak_Images";
     setParameters.inDir = "D:\Dropbox\ML_Project\LM_YOLO_Training\YOLO_Test_Imgs";
     %setParameters.inDir = "A:\Image_Database\DwC_10RandImg";
-    setParameters.outDir = "D:\D_Desktop\TEST_YOLO_BurOak_5AshufAug_NoEnlarge";
     
+    %setParameters.outDir = "D:\D_Desktop\TEST_YOLO_BurOak_5AshufAug_NoEnlarge";
+    %setParameters.inDir = "D:\D_Desktop\Grant";
+    setParameters.outDir = "D:\D_Desktop\Grant_Out";
+    % D:\D_Desktop\Grant_Out\Segmentation\Solanaceae_Segment.jpg
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%       Save Options        %%%
@@ -49,6 +52,10 @@ function LeafMachineMeasure_Setup()
     
     % Save all attempted and successful ruler prediction images
     setParameters.printRulerOverlay = true; % DEFAULT: true
+    
+    % Prints the ruler summary overlay on top of segmentation image
+    % printRulerOverlay must be true also for this to work
+    setParameters.printRulerOverlayComplex = true; % DEFAULT: true
     
     
     % Save a csv file for each input image, contains all intermediate tickmark selection metadata
@@ -74,7 +81,7 @@ function LeafMachineMeasure_Setup()
     %     2. Using non-machine learning computer vision
     %            |----> setParameters.useSemSeg = false
     % Try both on your data and see which gives better results, they perform differently
-    setParameters.useSemSeg = false; % DEFAULT: false
+    setParameters.useSemSeg = true; % DEFAULT: false
     
     
     % If your computer/cluster has a gpu, set to "gpu", otherwise set to "auto" in most cases
@@ -104,6 +111,10 @@ function LeafMachineMeasure_Setup()
     % and the bouding boxes for rulers and barcodes will be enlarged
     setParameters.enlarge = false; % DEFAULT: false
     
+    % Set width of printed bounding boxes. *Note* this ONLY changes the visualization, it does not change
+    % the actual bounding boxes. Setting to "Bold" or "Bolder" makes it easier to see the bounding boxes in the
+    % rulerOverlay image. Setting to "Exact" will plot a single pixel line.
+    setParameters.rulerBoundingBoxPrintThickness = "Bold"; % DEFAULT: "Bold"
     
     % Set detection strength. This is the minimum ruler detection confidence. 
     % *NOTE* Strict return the least number of boxes and may not work well for all datasets
