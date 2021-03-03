@@ -59,11 +59,12 @@ function LeafMachineMeasure(setParameters)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if setParameters.useSemSeg
             timeSeg_START = tic;
-            imgText = LMM_basicSegmentation(net.SemSeg,imgProps.img,setParameters.useSemSeg_gpu);
+            [imgText,imgSeg] = LMM_basicSegmentation(net.SemSeg,imgProps.img,setParameters.useSemSeg_gpu);
             timeSeg_END = toc(timeSeg_START);
             LMM_printToConsole("seg",indFile,fLen,[],timeSeg_END);
         else
             imgText = [];
+            imgSeg = [];
         end
         
 
@@ -72,7 +73,7 @@ function LeafMachineMeasure(setParameters)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         timeDetect_START = tic;
 
-        detectionData = LMM_detectObjects(net.YOLO,imgProps,imgText,setParameters,dirList);
+        detectionData = LMM_detectObjects(net.YOLO,imgProps,imgText,imgSeg,setParameters,dirList);
         
         timeDetect_END = toc(timeDetect_START);
         LMM_printToConsole("detect",indFile,fLen,[],timeDetect_END);

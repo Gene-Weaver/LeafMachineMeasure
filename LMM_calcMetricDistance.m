@@ -48,15 +48,11 @@ function measurementData  = LMM_calcMetricDistance(detectionData,imgProps,setPar
         dataTicks_Text = [];
     end
 
-    cleanedTable = LMM_cleanupImageData(imgProps, dirList, setParameters, dataTicks_Ruler,dataTicks_Text);
+    %cleanedTable = LMM_cleanupImageData(imgProps, dirList, setParameters, dataTicks_Ruler,dataTicks_Text); %%%%%%%%%%%%%%%%%%%% in progress 
+    %measurementData.rulers = dataTicks_Ruler;
+    %measurementData.text = dataTicks_Text;
     
-    
-    
-    
-    
-    
-    measurementData.rulers = dataTicks_Ruler;
-    measurementData.text = dataTicks_Text;
+    measurementData = [];
     
     
 
